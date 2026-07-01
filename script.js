@@ -14,7 +14,3 @@ buttons.forEach(button => {
     display.textContent = currentInput;
   });
 });
-
-if (type === number) {
-    currentInput += value;
-} 
