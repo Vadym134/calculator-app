@@ -13,11 +13,18 @@ buttons.forEach(button => {
     const value = button.dataset.value;
 
     if (type === "number") {
+        if (currentInput === "Error") {
+          currentInput = '';
+          displayText = '';
+        }
         currentInput += value;
         displayText += value;
         display.textContent = displayText;
 
     } else if (type === "operator") {
+        if (currentInput === "") {
+          return;
+        }
         firstNumber = currentInput;
         operator = value;
         currentInput = '';
@@ -37,9 +44,9 @@ buttons.forEach(button => {
         currentInput = String(result);
         displayText = String(result);
         display.textContent = displayText;
-        firstNumber;
-        secondNumber;
-        operator;
+        firstNumber = undefined;
+        secondNumber = undefined;
+        operator = undefined;
     }
 
     console.log(firstNumber, operator, currentInput);
@@ -54,8 +61,10 @@ function calculate(firstNumber, operator, secondNumber) {
     return Number(firstNumber) - Number(secondNumber);
   } else if (operator === "*") {
     return Number(firstNumber) * Number(secondNumber);
+  } else if (operator === "/" && secondNumber === "0") {
+    return "Error";
   } else if (operator === "/") {
     return Number(firstNumber) / Number(secondNumber);
-  }
+  } 
 }
 
