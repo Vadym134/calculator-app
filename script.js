@@ -6,6 +6,8 @@ let firstNumber
 let operator
 let secondNumber
 let displayText = '';
+let isResult = false;
+const MAX_INPUT_LENGTH = 12;
 
 buttons.forEach(button => {
   button.addEventListener('click', () => {
@@ -13,10 +15,15 @@ buttons.forEach(button => {
     const value = button.dataset.value;
 
     if (type === "number") {
-        if (currentInput === "Error") {
+        if (currentInput === "Error" || isResult === true) {
+          isResult = false;
           currentInput = '';
           displayText = '';
+          display.textContent = displayText;
         }
+        if (currentInput.length === MAX_INPUT_LENGTH) {
+          return
+        } 
         currentInput += value;
         displayText += value;
         display.textContent = displayText;
@@ -25,6 +32,7 @@ buttons.forEach(button => {
         if (currentInput === "") {
           return;
         }
+        isResult = false;
         firstNumber = currentInput;
         operator = value;
         currentInput = '';
@@ -35,21 +43,38 @@ buttons.forEach(button => {
     } else if (type === "action" && value === "C") {
         currentInput = '';
         displayText = '';
+        isResult = false;
         display.textContent = '0';
 
     } else if (type === "action" && value === "=") {
+        if (firstNumber === undefined || operator === undefined || currentInput === "") {
+          return;
+        } 
         secondNumber = currentInput;
         const result = calculate(firstNumber, operator, secondNumber);
         console.log(result);
         currentInput = String(result);
         displayText = String(result);
+        isResult = true;
         display.textContent = displayText;
         firstNumber = undefined;
         secondNumber = undefined;
         operator = undefined;
+        
+    } else if (type === "point" && value === ".") {
+        if (currentInput.includes(".")) {
+          return;
+        }
+        if (currentInput === "") {
+          currentInput = "0.";
+          displayText += "0."
+          display.textContent = displayText;
+          return;
+        }
+        currentInput += value;
+        displayText += value;
+        display.textContent = displayText;
     }
-
-    console.log(firstNumber, operator, currentInput);
 
   });
 });
@@ -61,10 +86,9 @@ function calculate(firstNumber, operator, secondNumber) {
     return Number(firstNumber) - Number(secondNumber);
   } else if (operator === "*") {
     return Number(firstNumber) * Number(secondNumber);
-  } else if (operator === "/" && secondNumber === "0") {
+  } else if (operator === "/" && Number(secondNumber) === 0) {
     return "Error";
   } else if (operator === "/") {
     return Number(firstNumber) / Number(secondNumber);
   } 
 }
-
